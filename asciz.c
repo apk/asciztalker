@@ -8,6 +8,8 @@
 #include <sys/types.h>
 #include <signal.h>
 
+static int pid;
+
 struct buf {
   char buf [1024];
   int fill;
@@ -46,6 +48,7 @@ void buf_rd_x (struct buf *b, int fd) {
   }
   if (r == 0) {
     fprintf (stderr, "EOF\n");
+    kill (pid, SIGINT);
     exit (1);
   }
   b->fill += r;
