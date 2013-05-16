@@ -74,10 +74,14 @@ void buf_wr_x (struct buf *b, int fd) {
 
 int main (int argc, char **argv) {
   int fds [2];
-  int pid;
+  char *tg = getenv ("yyx");
   int r = socketpair (AF_LOCAL, SOCK_STREAM, 0, fds);
   if (r == -1) {
     perror ("socketpair");
+    exit (1);
+  }
+  if (!tg) {
+    fprintf (stderr, "no target");
     exit (1);
   }
   pid = fork ();
@@ -95,7 +99,7 @@ int main (int argc, char **argv) {
     struct buf up, down;
     buf_init (&up);
     buf_init (&down);
-    buf_appendz (&down, "host:port");
+    buf_appendz (&down, tg);
     close (fds [1]);
     while (1) {
       fd_set R, W;
